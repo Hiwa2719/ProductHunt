@@ -1,13 +1,22 @@
 from django.db import models
+from django.db.models.signals import pre_save
 from django.contrib.auth import get_user_model
 from django.urls import reverse
 
 User = get_user_model()
 
 
+def image_field_upload_location(instance, filename):
+    return image_upload_location('image', instance, filename)
+
+
+def icon_field_upload_location(instance, filename):
+    return image_upload_location('icon', instance, filename)
+
+
 def image_upload_location(field, instance, filename):
     date = instance.pub_date.strftime('%Y-%m-%d')
-    return field + '/' + f'{instance.user}-{date}'
+    return field + '/' + f'{instance.hunter}-{date}'
 
 
 class Product(models.Model):
@@ -16,10 +25,10 @@ class Product(models.Model):
     url = models.URLField(blank=True)
     pub_date = models.DateTimeField(auto_now=False, auto_now_add=True)
     image = models.ImageField(
-        # upload_to=lambda instance, filename: 'image',
+        upload_to=image_field_upload_location,
         blank=True)
     icon = models.ImageField(
-        # upload_to=lambda instance, filename: 'icon',
+        upload_to=icon_field_upload_location,
         blank=True)
     vote = models.ManyToManyField(User, related_name='votes')
     content = models.TextField()
@@ -38,8 +47,3 @@ class Product(models.Model):
 
     def remove_vote(self, user):
         self.vote.remove(user)
-
-    def save(self, *args, **kwargs):
-        self.image.upload_to = image_upload_location('image', self, self.image.name)
-        self.icon.upload_to = image_upload_location('icon', self, self.image.name)
-        return super().save(*args, **kwargs)

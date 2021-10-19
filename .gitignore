@@ -321,3 +321,8 @@ fabric.properties
 # Cython debug symbols
 
 # End of https://www.toptal.com/developers/gitignore/api/python,django,pycharm
+
+        icon/
+        icon_field_upload_location/
+        image/
+        image_field_upload_location/
