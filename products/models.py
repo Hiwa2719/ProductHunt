@@ -15,8 +15,9 @@ def icon_field_upload_location(instance, filename):
 
 
 def image_upload_location(field, instance, filename):
+    ext = filename.rsplit('.', 1)[-1]
     date = instance.pub_date.strftime('%Y-%m-%d')
-    return field + '/' + f'{instance.hunter}-{date}'
+    return field + '/' + f'{instance.hunter}-{date}' + '.' + ext
 
 
 class Product(models.Model):
