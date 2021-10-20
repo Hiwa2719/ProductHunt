@@ -1,5 +1,7 @@
+from django.http import HttpResponseRedirect
 from django.views.generic import TemplateView, ListView, DetailView, CreateView, UpdateView
 
+from .forms import ProductCreateForm
 from .models import Product
 
 
@@ -13,10 +15,15 @@ class ProductDetailView(DetailView):
 
 
 class ProductCreateView(CreateView):
-    model = Product
-    fields = '__all__'
+    form_class = ProductCreateForm
+    template_name = 'products/product_form.html'
+
+    def form_valid(self, form):
+        self.object = form.save(commit=False)
+        self.object.hunter = self.request.user
+        self.object.save()
+        return HttpResponseRedirect(self.get_success_url())
 
 
 class ProductUpdateView(UpdateView):
     model = Product
-

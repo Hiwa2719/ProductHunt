@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <div class="container my-5">
+        <div class="row justify-content-center">
+            <div class="col-6">
+                {% include 'form.html' with input_val='Create' %}
+            </div>
+        </div>
+    </div>
+{% endblock %}
