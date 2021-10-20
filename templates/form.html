@@ -1,0 +1,8 @@
+{% load django_bootstrap5 %}
+
+<form action="{{ action|default:'#' }}" method="{{ method|default:'post' }}">
+    {% csrf_token %}
+    {% bootstrap_form form %}
+    <input type="submit" value="{{ input_val|default:'submit' }}" class="btn btn-success">
+    <a href="{% url 'index' %}">Cancel</a>
+</form>
