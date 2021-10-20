@@ -4,4 +4,4 @@ from .models import Product
 
 @admin.register(Product)
 class ProductModelAdmin(admin.ModelAdmin):
-    pass
+    filter_horizontal = ['vote']
