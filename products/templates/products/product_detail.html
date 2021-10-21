@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-6">
+                <h4>{{ product.title }}</h4>
+                {% if product.image %}
+                    <img src="{{ product.image.url }}" alt="" class="my-5">
+                {% endif %}
+                <p>{{ product.content }}</p>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
