@@ -43,8 +43,8 @@ class Product(models.Model):
     def get_absolute_url(self):
         return reverse('products:product-detail', kwargs={'pk': self.pk})
 
-    def add_vote(self, user):
-        self.vote.add(user)
-
-    def remove_vote(self, user):
-        self.vote.remove(user)
+    def vote_check(self, user):
+        if user in self.vote.all():
+            self.vote.remove(user)
+        else:
+            self.vote.add(user)

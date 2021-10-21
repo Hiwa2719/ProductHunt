@@ -7,10 +7,10 @@
             {% for product in product_list %}
                 <div class="col-3 my-3 ">
                     <a href="{% url 'products:product-detail' product.pk %}" style="text-decoration: none; color: black" >{{ product }}</a>
-                    {% if view.user in product.vote.all %}
-                        <button class="btn btn-outline-success">Vote</button>
+                    {% if request.user in product.vote.all %}
+                        <a class="btn btn-outline-warning" href="{% url 'products:vote' product.pk %}">Voted</a>
                     {% else %}
-                        <button class="btn btn-outline-warning">Vote</button>
+                        <a class="btn btn-outline-success" href="{% url 'products:vote' product.pk %}">Vote</a>
                     {% endif %}
                 </div>
             {% endfor %}

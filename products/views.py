@@ -1,6 +1,7 @@
 from django.http import HttpResponseRedirect, Http404
-from django.views.generic import TemplateView, ListView, DetailView, CreateView, UpdateView
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.views.generic import TemplateView, ListView, DetailView, CreateView, UpdateView, View
+from django.urls import reverse
 
 from .forms import ProductCreateForm
 from .models import Product
@@ -18,10 +19,14 @@ class ProductDetailView(DetailView):
 class ProductCreateView(LoginRequiredMixin, CreateView):
     form_class = ProductCreateForm
     template_name = 'products/product_form.html'
+    extra_context = {'input_val': 'Create'}
 
     def form_valid(self, form):
         self.object = form.save(commit=False)
-        self.object.hunter = self.request.user
+        user = self.request.user
+        self.object.hunter = user
+        self.object.save()
+        self.object.vote.add(user)
         self.object.save()
         return HttpResponseRedirect(self.get_success_url())
 
@@ -29,9 +34,18 @@ class ProductCreateView(LoginRequiredMixin, CreateView):
 class ProductUpdateView(UpdateView):
     form_class = ProductCreateForm
     model = Product
+    extra_context = {'input_val': 'Update'}
 
     def dispatch(self, request, *args, **kwargs):
         product = Product.objects.get(pk=kwargs.get('pk'))
         if request.user == product.hunter:
             return super().dispatch(request, *args, **kwargs)
         raise Http404
+
+
+class ProductVoteView(LoginRequiredMixin, View):
+    def get(self, request, *args, **kwargs):
+        pk = kwargs.get('pk')
+        product = Product.objects.get(pk=pk)
+        product.vote_check(request.user)
+        return HttpResponseRedirect(reverse('index'))
