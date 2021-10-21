@@ -1,5 +1,7 @@
 from django.http import HttpResponseRedirect, Http404
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.utils.decorators import method_decorator
 from django.views.generic import TemplateView, ListView, DetailView, CreateView, UpdateView, View
 from django.urls import reverse
 
@@ -31,6 +33,7 @@ class ProductCreateView(LoginRequiredMixin, CreateView):
         return HttpResponseRedirect(self.get_success_url())
 
 
+@method_decorator(login_required, name='dispatch')
 class ProductUpdateView(UpdateView):
     form_class = ProductCreateForm
     model = Product
