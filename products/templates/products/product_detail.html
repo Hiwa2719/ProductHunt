@@ -9,8 +9,11 @@
                     <img src="{{ product.image.url }}" alt="" class="my-5">
                 {% endif %}
                 <p>{{ product.content }}</p>
+            {% if product.hunter == request.user %}
+                <a href="{% url 'products:product-update' product.pk %}" class="btn btn-warning">Edit</a>
+            {% endif %}
             </div>
         </div>
     </div>
-
+    
 {% endblock %}
