@@ -20,6 +20,17 @@ def image_upload_location(field, instance, filename):
     return field + '/' + f'{instance.hunter}-{date}' + '.' + ext
 
 
+class ProductManager(models.Manager):
+    def create(self, request, *args, **kwargs):
+        instance = self.get_queryset().create(
+            hunter=request.user,
+            *args, **kwargs
+        )
+        instance.vote.add(request.user)
+        instance.save()
+        return instance
+
+
 class Product(models.Model):
     hunter = models.ForeignKey(User, on_delete=models.CASCADE, )
     title = models.CharField(max_length=120)
@@ -33,6 +44,8 @@ class Product(models.Model):
         blank=True)
     vote = models.ManyToManyField(User, related_name='votes')
     content = models.TextField()
+
+    objects = ProductManager()
 
     def __str__(self):
         return self.title
