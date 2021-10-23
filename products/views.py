@@ -24,7 +24,10 @@ class ProductCreateView(LoginRequiredMixin, CreateView):
     extra_context = {'input_val': 'Create'}
 
     def form_valid(self, form):
-        self.object = Product.objects.create(request=self.request, **form.cleaned_data)
+        self.object = Product.objects.create(
+            request=self.request,
+            **form.cleaned_data
+        )
         return HttpResponseRedirect(self.get_success_url())
 
 
