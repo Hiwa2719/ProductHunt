@@ -50,3 +50,16 @@ class IndexViewTestCase(TestCase):
         self.assertContains(response, 'CPU')
 
 
+class ProductDetailViewTestCase(TestCase):
+    fixtures = ['fixtures/database.json']
+
+    def test_getting_a_product_detail(self):
+        """getting detail of a product"""
+        product = Product.objects.get(pk=2)
+        response = self.client.get(reverse('products:product-detail', kwargs={'pk': 2}))
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.resolver_match.fun.__name__, views.ProductDetailView.as_view().__name__)
+        self.assertTemplateUsed(response, 'products/product_detail.html')
+        self.assertIn('product', response.context)
+        self.assertContains(response, product.title)
+
