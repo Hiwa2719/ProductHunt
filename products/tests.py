@@ -172,3 +172,5 @@ class ProductVoteViewTestCase(TestCase):
         self.assertRedirects(response, reverse('index'))
         product_voted = Product.objects.get(pk=2)
         self.assertNotIn(user, product_voted.vote.all())
+
+
