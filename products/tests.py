@@ -1,4 +1,4 @@
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
 from django.test import TestCase
 from django.urls import reverse
 
@@ -6,8 +6,14 @@ from . import views
 from .forms import ProductCreateForm
 from .models import Product
 
+User = get_user_model()
+
 
 #  Unit tests
+
+def force_login(client):
+    client.login(username='hiwa@gmail.com', password='asdf')
+
 
 class ProductModelTestCase(TestCase):
     fixtures = ['fixtures/database.json']
@@ -69,9 +75,6 @@ class ProductDetailViewTestCase(TestCase):
 class ProductCreateViewTestCase(TestCase):
     fixtures = ['fixtures/database.json']
 
-    def force_login(self):
-        self.client.login(username='hiwa@gmail.com', password='asdf')
-
     def test_getting_product_create_page_by_anonymous_user(self):
         response = self.client.get(reverse('products:create-product'), follow=True)
         self.assertEqual(response.status_code, 200)
@@ -79,7 +82,7 @@ class ProductCreateViewTestCase(TestCase):
 
     def test_getting_to_product_create_page(self):
         """test getting create form"""
-        self.force_login()
+        force_login(self.client)
         response = self.client.get(reverse('products:create-product'))
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.resolver_match.func.__name__, views.ProductCreateView.as_view().__name__)
@@ -91,7 +94,7 @@ class ProductCreateViewTestCase(TestCase):
 
     def test_posting_product_data_to_Product_create_view(self):
         """examining creating new product"""
-        self.force_login()
+        force_login(self.client)
         response = self.client.post(reverse('products:create-product'),
                                     {'title': 'your cv', 'content': 'this place is hell'})
         self.assertEqual(response.status_code, 302)
@@ -100,7 +103,7 @@ class ProductCreateViewTestCase(TestCase):
 
     def test_redirecting_after_creating_product(self):
         """test redirecting after creation"""
-        self.force_login()
+        force_login(self.client)
         response = self.client.post(reverse('products:create-product'),
                                     {'title': 'your cv', 'content': 'this place is hell'}, follow=True)
         self.assertEqual(response.status_code, 200)
@@ -110,9 +113,6 @@ class ProductCreateViewTestCase(TestCase):
 
 class ProductUpdateViewTestCase(TestCase):
     fixtures = ['fixtures/database.json']
-
-    def force_login(self):
-        self.client.login(username='hiwa@gmail.com', password='asdf')
 
     def test_redirecting_for_anonymous_user(self):
         """testing if anonymous user being redirected"""
@@ -124,7 +124,7 @@ class ProductUpdateViewTestCase(TestCase):
     def test_getting_update_page(self):
         """test getting update page of product with pk 2"""
         product = Product.objects.get(pk=2)
-        self.force_login()
+        force_login(self.client)
         response = self.client.get(reverse('products:product-update', kwargs={'pk': 2}))
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.resolver_match.func.__name__, views.ProductUpdateView.as_view().__name__)
@@ -135,7 +135,7 @@ class ProductUpdateViewTestCase(TestCase):
 
     def test_updating_title(self):
         """test updating product title"""
-        self.force_login()
+        force_login(self.client)
         product = Product.objects.get(pk=2)
         response = self.client.post(reverse('products:product-update', kwargs={'pk': 2}),
                                     {'title': 'intel CPU', 'content': product.content})
@@ -145,9 +145,30 @@ class ProductUpdateViewTestCase(TestCase):
 
     def test_redirecting(self):
         """test redirecting url"""
-        self.force_login()
+        force_login(self.client)
         product = Product.objects.get(pk=2)
         response = self.client.post(reverse('products:product-update', kwargs={'pk': 2}),
                                     {'title': 'intel CPU', 'content': product.content}, follow=True)
         self.assertEqual(response.status_code, 200)
         self.assertRedirects(response, reverse('products:product-detail', kwargs={'pk': 2}))
+
+
+class ProductVoteViewTestCase(TestCase):
+    fixtures = ['fixtures/database.json']
+
+    def test_redirecting_for_anonymous_user(self):
+        response = self.client.get(reverse('products:vote', kwargs={'pk': 2}), follow=True)
+        self.assertEqual(response.status_code, 200)
+        self.assertRedirects(response, reverse('login') + '?next=' + reverse('products:vote', kwargs={'pk': 2}))
+
+    def test_vote_on_a_product(self):
+        """voting or taking back a vote for a product"""
+        product = Product.objects.get(pk=2)
+        user = User.objects.get(username='hiwa@gmail.com')
+        force_login(self.client)
+        self.assertIn(user, product.vote.all())
+        response = self.client.get(reverse('products:vote', kwargs={'pk': 2}))
+        self.assertEqual(response.status_code, 302)
+        self.assertRedirects(response, reverse('index'))
+        product_voted = Product.objects.get(pk=2)
+        self.assertNotIn(user, product_voted.vote.all())
