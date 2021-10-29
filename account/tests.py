@@ -40,8 +40,8 @@ class LoginViewTestCase(TestCase):
 
     def test_posting_to_login_view(self):
         """posting to login view"""
-        user = User.objects.create_user(username='hiwa@gmail.com', password='asdf')
-        response = self.client.post(reverse('login'), {'username': user.username, 'password': 'asdf'})
+        user = User.objects.create_user(username='hiwa@gmail.com', password='tests')
+        response = self.client.post(reverse('login'), {'username': user.username, 'password': 'tests'})
         self.assertEqual(response.status_code, 302)
         self.assertRedirects(response, reverse('index'))
         self.assertIn('_auth_user_id', self.client.session)

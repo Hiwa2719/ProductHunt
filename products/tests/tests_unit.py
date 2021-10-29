@@ -2,9 +2,9 @@ from django.contrib.auth import get_user_model
 from django.test import TestCase
 from django.urls import reverse
 
-from . import views
-from .forms import ProductCreateForm
-from .models import Product
+from products import views
+from products.forms import ProductCreateForm
+from products.models import Product
 
 User = get_user_model()
 
@@ -12,7 +12,7 @@ User = get_user_model()
 #  Unit tests
 
 def force_login(client):
-    client.login(username='hiwa@gmail.com', password='asdf')
+    client.login(username='hiwa@gmail.com', password='tests')
 
 
 class ProductModelTestCase(TestCase):
