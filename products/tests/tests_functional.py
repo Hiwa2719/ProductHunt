@@ -48,7 +48,11 @@ class PublicFunctionalTests(StaticLiveServerTestCase):
         self.assertTrue(match)
 
     def test_getting_to_product_detail_page(self):
-        pass
+        product = self.browser.find_elements_by_class_name('product-item')[0]
+        href = product.get_attribute('href')
+        product.click()
+        self.wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, 'img')))
+        self.assertEqual(href, self.browser.current_url)
 
     def tearDown(self) -> None:
         self.browser.quit()
