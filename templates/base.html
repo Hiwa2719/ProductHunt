@@ -18,17 +18,17 @@
             <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
                 {% if user.is_authenticated %}
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'logout' %}">Logout</a>
+                        <a class="nav-link" href="{% url 'logout' %}" id="logout">Logout</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'products:create-product' %}">Create Product</a>
+                        <a class="nav-link" href="{% url 'products:create-product' %}" id="create-product">Create Product</a>
                     </li>
                 {% else %}
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'login' %}">Login</a>
+                        <a class="nav-link" href="{% url 'login' %}" id="login">Login</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'signup' %}">Signup</a>
+                        <a class="nav-link" href="{% url 'signup' %}" id="signup">Signup</a>
                     </li>
                 {% endif %}
                 <li class="nav-item">
