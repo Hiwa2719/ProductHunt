@@ -86,10 +86,20 @@ class PrivateFunctionalTestCase(StaticLiveServerTestCase):
         pass
 
     def test_creating_a_product(self):
-        pass
+        self.browser.find_element_by_id('create-product').click()
+        self.wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, '#id_title')))
+        self.browser.find_element_by_id('id_title').send_keys('coming from moon')
+        self.browser.find_element_by_id('id_content').send_keys('this is the first spaceship coming from moon')
+        self.browser.find_element_by_css_selector('input[value="Create"]').click()
+        match = re.search(self.live_server_url + '/products/[0-9]+/', self.browser.current_url)
+        self.assertTrue(match)
+        self.assertIn('coming fro moon', self.browser.page_source)
+        self.browser.get(self.index_url)
 
     def test_logout(self):
-        pass
+        self.browser.find_element_by_id('logout').click()
+        self.wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, '#login')))
+        self.assertEqual(self.index_url, self.browser.current_url)
 
     def tearDown(self) -> None:
         self.browser.quit()
