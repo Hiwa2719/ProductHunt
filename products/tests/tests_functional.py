@@ -62,3 +62,34 @@ class PublicFunctionalTests(StaticLiveServerTestCase):
 
     def tearDown(self) -> None:
         self.browser.quit()
+
+
+class PrivateFunctionalTestCase(StaticLiveServerTestCase):
+    fixtures = ['fixtures/database2.json']
+
+    def setUp(self) -> None:
+        self.browser = webdriver.Firefox()
+        self.wait = WebDriverWait(self.browser, 10)
+        self.index_url = self.live_server_url + reverse('index')
+        self.login_url = self.live_server_url + reverse('login')
+        self.login()
+
+    def login(self):
+        self.browser.get(self.login_url)
+        self.browser.find_element_by_id('id_username').send_keys('hiwa@gmail.com')
+        self.browser.find_element_by_id('id_password').send_keys('asdf')
+        self.browser.find_element_by_css_selector('input[value="Login"]').click()
+        self.wait.until(EC.url_to_be(self.index_url))
+        self.assertTrue(self.browser.find_element_by_id('logout'))
+
+    def test_vote(self):
+        pass
+
+    def test_creating_a_product(self):
+        pass
+
+    def test_logout(self):
+        pass
+
+    def tearDown(self) -> None:
+        self.browser.quit()
