@@ -80,9 +80,10 @@ class PrivateFunctionalTestCase(StaticLiveServerTestCase):
         self.browser.find_element_by_id('id_password').send_keys('asdf')
         self.browser.find_element_by_css_selector('input[value="Login"]').click()
         self.wait.until(EC.url_to_be(self.index_url))
-        self.assertTrue(self.browser.find_element_by_id('logout'))
+        self.browser.find_element_by_id('logout')
 
     def test_vote(self):
+        # todo test clicking on 'vote' on index page
         pass
 
     def test_creating_a_product(self):
@@ -93,8 +94,13 @@ class PrivateFunctionalTestCase(StaticLiveServerTestCase):
         self.browser.find_element_by_css_selector('input[value="Create"]').click()
         match = re.search(self.live_server_url + '/products/[0-9]+/', self.browser.current_url)
         self.assertTrue(match)
-        self.assertIn('coming fro moon', self.browser.page_source)
+        self.assertIn('coming from moon', self.browser.page_source)
+        self.browser.find_element_by_class_name('edit')
+        self.browser.find_element_by_class_name('voted')
         self.browser.get(self.index_url)
+        product = self.browser.find_element_by_xpath("//a[contains(text(), 'coming from moon')]/following-sibling::a")
+        self.assertIn('voted', product.get_attribute('class'))
+        # todo add product update tests here
 
     def test_logout(self):
         self.browser.find_element_by_id('logout').click()

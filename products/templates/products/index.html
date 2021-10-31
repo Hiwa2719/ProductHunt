@@ -9,7 +9,7 @@
                     <a class="product-item" href="{% url 'products:product-detail' product.pk %}" style="text-decoration: none; color: black" >{{ product }}</a>
                 ({{ product.vote.all.count }})
                     {% if request.user in product.vote.all %}
-                        <a class="btn btn-outline-warning vote" href="{% url 'products:vote' product.pk %}">Voted</a>
+                        <a class="btn btn-outline-warning voted" href="{% url 'products:vote' product.pk %}">Voted</a>
                     {% else %}
                         <a class="btn btn-outline-success vote" href="{% url 'products:vote' product.pk %}">Vote</a>
                     {% endif %}

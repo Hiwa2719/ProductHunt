@@ -9,11 +9,17 @@
                     <img src="{{ product.image.url }}" alt="" class="my-5">
                 {% endif %}
                 <p>{{ product.content }}</p>
-            {% if product.hunter == request.user %}
-                <a href="{% url 'products:product-update' product.pk %}" class="btn btn-warning">Edit</a>
-            {% endif %}
+
+                {% if product.hunter == request.user %}
+                    <a class="btn btn-primary edit" href="{% url 'products:product-update' product.pk %}">Edit</a>
+                {% endif %}
+                {% if request.user in product.vote.all %}
+                    <a class="btn btn-outline-warning voted" href="{% url 'products:vote' product.pk %}">Voted</a>
+                {% else %}
+                    <a class="btn btn-outline-success vote" href="{% url 'products:vote' product.pk %}">Vote</a>
+                {% endif %}
             </div>
         </div>
     </div>
-    
+
 {% endblock %}
