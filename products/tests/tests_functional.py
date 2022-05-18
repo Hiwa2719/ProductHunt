@@ -104,7 +104,15 @@ class PrivateFunctionalTestCase(StaticLiveServerTestCase):
         self.browser.get(self.index_url)
         product = self.browser.find_element_by_xpath("//a[contains(text(), 'coming from moon')]/following-sibling::a")
         self.assertIn('voted', product.get_attribute('class'))
-    # todo add product update tests here
+
+    def test_updating_post(self):
+        self.browser.get(self.live_server_url + reverse('products:product-update', kwargs={'pk': 3}))
+        self.wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, '#id_title')))
+        self.browser.find_element(By.ID, 'id_title').clear()
+        self.browser.find_element(By.ID, 'id_title').send_keys('new title for id 3')
+        self.browser.find_element(By.CSS_SELECTOR, 'input[type="submit"]').click()
+        self.wait.until(EC.url_to_be(self.live_server_url + reverse('products:product-detail', kwargs={'pk': 3})))
+        self.assertIn('new title for id 3', self.browser.page_source)
 
     def test_logout(self):
         self.browser.find_element_by_id('logout').click()
@@ -112,5 +120,4 @@ class PrivateFunctionalTestCase(StaticLiveServerTestCase):
         self.assertEqual(self.index_url, self.browser.current_url)
 
     def tearDown(self) -> None:
-        # self.browser.quit()
-        pass
+        self.browser.quit()
