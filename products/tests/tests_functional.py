@@ -83,8 +83,12 @@ class PrivateFunctionalTestCase(StaticLiveServerTestCase):
         self.browser.find_element_by_id('logout')
 
     def test_vote(self):
-        # todo test clicking on 'vote' on index page
-        pass
+        element = self.browser.find_element(By.XPATH, '//a[text()="Vote"]')
+        href = element.get_attribute('href').removeprefix(self.index_url)
+        element.click()
+        self.wait.until(EC.url_to_be(self.index_url))
+        element2 = self.browser.find_element(By.CSS_SELECTOR, f'a[href="/{href}"]')
+        self.assertEqual(element2.text, 'Voted')
 
     def test_creating_a_product(self):
         self.browser.find_element_by_id('create-product').click()
@@ -100,7 +104,7 @@ class PrivateFunctionalTestCase(StaticLiveServerTestCase):
         self.browser.get(self.index_url)
         product = self.browser.find_element_by_xpath("//a[contains(text(), 'coming from moon')]/following-sibling::a")
         self.assertIn('voted', product.get_attribute('class'))
-        # todo add product update tests here
+    # todo add product update tests here
 
     def test_logout(self):
         self.browser.find_element_by_id('logout').click()
@@ -108,4 +112,5 @@ class PrivateFunctionalTestCase(StaticLiveServerTestCase):
         self.assertEqual(self.index_url, self.browser.current_url)
 
     def tearDown(self) -> None:
-        self.browser.quit()
+        # self.browser.quit()
+        pass

@@ -12,7 +12,8 @@ User = get_user_model()
 #  Unit tests
 
 def force_login(client):
-    client.login(username='hiwa@gmail.com', password='tests')
+    user = User.objects.get(username='hiwa@gmail.com')
+    client.force_login(user)
 
 
 class ProductModelTestCase(TestCase):
